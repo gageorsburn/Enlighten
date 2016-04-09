@@ -9,6 +9,8 @@ using System.Web.UI.WebControls;
 
 using Enlighten;
 using Enlighten.Models;
+using Microsoft.Owin.Security;
+using System.Security.Claims;
 
 public partial class _Default : System.Web.UI.Page
 {
@@ -18,6 +20,9 @@ public partial class _Default : System.Web.UI.Page
         {
             AnonymousPanel.Visible = false;
             LoggedInPanel.Visible = true;
+
+            CourseRepeater.DataSource = AuthenticatedMemberCourses;
+            CourseRepeater.DataBind();
         }
         else
         {
@@ -28,21 +33,44 @@ public partial class _Default : System.Web.UI.Page
 
     protected void LoginButton_Click(object sender, EventArgs e)
     {
-        
-        //if(Page.IsValid)
+        CourseDbContext dbContext = new CourseDbContext();
 
-        var manager = new UserManager();
+        string email = Email.Text;
+        string password = Password.Text;
 
-        ApplicationUser user = manager.Find(Email.Text, Password.Text);
+        Member authenticatedMember = dbContext.Members.Where(m => m.Email == email).FirstOrDefault();
 
-        if (user != null)
+        PasswordVerificationResult verifiedResult = new PasswordHasher().VerifyHashedPassword(authenticatedMember.Password, password);
+        if(verifiedResult.HasFlag(PasswordVerificationResult.Success))
         {
-            IdentityHelper.SignIn(manager, user, RememberMe.Checked);
-            IdentityHelper.RedirectToReturnUrl(Request.QueryString["ReturnUrl"], Response);
+            IAuthenticationManager authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
+            authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Email, authenticatedMember.Email),
+                new Claim(ClaimTypes.Name, authenticatedMember.Email)
+            };
+
+            var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+            
+            authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = RememberMe.Checked }, identity);
         }
         else
         {
             sucess.Text = "Invalid e-mail or password.";
+        }
+    }
+
+    public ICollection<Course> AuthenticatedMemberCourses
+    {
+        get
+        {
+            CourseDbContext dbContext = new CourseDbContext();
+
+            var email = Context.User.Identity.GetUserName();
+            Member authenticatedMember = dbContext.Members.Where(m => m.Email == email).FirstOrDefault();
+            return authenticatedMember.Courses;
         }
     }
 }

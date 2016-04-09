@@ -1,7 +1,9 @@
 ﻿<%@ Application Language="C#" %>
 <%@ Import Namespace="Enlighten" %>
+<%@ Import Namespace="Enlighten.Models" %>
 <%@ Import Namespace="System.Web.Optimization" %>
 <%@ Import Namespace="System.Web.Routing" %>
+<%@ Import Namespace="System.Data.Entity" %>
 
 <script runat="server">
 

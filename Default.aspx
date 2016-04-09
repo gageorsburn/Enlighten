@@ -83,11 +83,15 @@
                 <div class="col-lg-12">
                     <h1 class="page-header">Home</h1>
                 </div>
-           Nothing yet. 
-
+           
         </div>
 
-            
+        <asp:Repeater ID="CourseRepeater" runat="server">
+            <ItemTemplate>
+                 First Name: <%# Eval("Title") %><br />
+            </ItemTemplate>
+        </asp:Repeater>
+        
     </asp:Panel>
 
 </asp:Content>

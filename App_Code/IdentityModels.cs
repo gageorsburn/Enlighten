@@ -1,16 +1,31 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
 using Microsoft.Owin.Security;
 using System.Web;
 using System;
+using System.Collections.Generic;
 
 using Enlighten.Models;
 
 namespace Enlighten.Models
 {
+    public enum UserType
+    {
+        Administrator,
+        Professor,
+        Assistant,
+        Student
+    }
+
     public class ApplicationUser : IdentityUser
     {
         public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public string IdNumber { get; set; }
+
+        public UserType Type { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
