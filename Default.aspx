@@ -71,9 +71,12 @@
                         </div>
                     </div>
 
-                    <asp:Label ID="sucess" runat="server" Text=""></asp:Label>
-
-                    <asp:Button ID="LoginButton" CssClass="btn btn-primary" runat="server" Text="Submit" OnClick="LoginButton_Click" />
+                    <div class="control-group form-group">
+                        <div class="controls">
+                    <asp:Button ID="LoginButton" CssClass="btn btn-primary " runat="server" Text="Submit" OnClick="LoginButton_Click" />
+                            </div>
+                        </div>
+                    <asp:Label ID="SuccessLabel" runat="server" Text=""></asp:Label>
                 </div>
             </div>
     </asp:Panel>
@@ -106,7 +109,9 @@
             <SeparatorTemplate>
                 <hr />
             </SeparatorTemplate>
-            
+            <FooterTemplate>
+                <asp:Label ID="lblEmptyData" runat="server" Visible='<%# ((Repeater)Container.NamingContainer).Items.Count == 0 %>' Text="Not enrolled in any classes!"></asp:Label>
+            </FooterTemplate>
         </asp:Repeater>
         
     </asp:Panel>

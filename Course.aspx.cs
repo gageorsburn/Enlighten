@@ -24,7 +24,6 @@ public partial class Course : System.Web.UI.Page
         ApplicationDbContext dbContext = new ApplicationDbContext();
         course = dbContext.Courses.Where(c => c.Id == courseId).FirstOrDefault();
 
-        CourseTitleLabel.Text = course.Title;
         ActivePanelLabel.Text = "Course Home";
 
         HomePanel.Visible = true;
@@ -89,5 +88,34 @@ public partial class Course : System.Web.UI.Page
         AssignmentPanel.Visible = false;
         GradePanel.Visible = false;
         ClassListPanel.Visible = true;
+    }
+
+    public Member GetProfessor()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        return dbContext.Members.Where(m => m.Id == course.ProfessorId).FirstOrDefault();
+    }
+
+    public Member GetAssistant()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        return dbContext.Members.Where(m => m.Id == course.AssistantId).FirstOrDefault();
+    }
+
+    public IEnumerable<Enlighten.Models.Member> ClassListRepeater_GetData()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        return dbContext.Members.Where(m => m.Courses.Any(c => c.Id == course.Id));
+    }
+
+    public string GetPictureUrl(Member member)
+    {
+        if (member.Picture == null)
+            return "";
+
+        return "data:image/jpg;base64," + Convert.ToBase64String(member.Picture, 0, member.Picture.Length);
     }
 }

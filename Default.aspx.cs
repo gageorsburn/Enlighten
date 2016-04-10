@@ -37,27 +37,36 @@ public partial class _Default : System.Web.UI.Page
 
         Member authenticatedMember = dbContext.Members.Where(m => m.Email == email).FirstOrDefault();
 
-        PasswordVerificationResult verifiedResult = new PasswordHasher().VerifyHashedPassword(authenticatedMember.Password, password);
-        if(verifiedResult.HasFlag(PasswordVerificationResult.Success))
+        if (authenticatedMember != null)
         {
-            IAuthenticationManager authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
-            authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+            PasswordVerificationResult verifiedResult = new PasswordHasher().VerifyHashedPassword(authenticatedMember.Password, password);
+            if (verifiedResult.HasFlag(PasswordVerificationResult.Success))
+            {
+                IAuthenticationManager authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
+                authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
 
-            var claims = new List<Claim>()
+                var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Email, authenticatedMember.Email),
                 new Claim(ClaimTypes.Name, authenticatedMember.Email)
             };
 
-            var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
-            
-            authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = RememberMe.Checked }, identity);
+                var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
 
-            Response.Redirect("~/Default.aspx");
+                authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = RememberMe.Checked }, identity);
+
+                Response.Redirect("~/Default.aspx");
+            }
+            else
+            {
+                SuccessLabel.ForeColor = System.Drawing.Color.Red;
+                SuccessLabel.Text = "Invalid e-mail or password.";
+            }
         }
         else
         {
-            sucess.Text = "Invalid e-mail or password.";
+            SuccessLabel.ForeColor = System.Drawing.Color.Red;
+            SuccessLabel.Text = "Invalid e-mail or password.";
         }
     }
 

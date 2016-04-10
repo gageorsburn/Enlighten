@@ -7,7 +7,7 @@
     <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header" runat="server">
-        <asp:Label ID="CourseTitleLabel" runat="server" Text="Label"></asp:Label>
+            <%= course.Title %>
                     <small>
             <asp:Label ID="ActivePanelLabel" runat="server" Text="Label"></asp:Label></small>
                 </h1>
@@ -38,7 +38,63 @@
     </asp:Panel>
 
     <asp:Panel ID="ClassListPanel" runat="server">
-        ClassList
+        <div class="row">
+        <div class="col-md-offset-3 col-md-3 text-center">
+                    <div class="thumbnail">
+                        <%= GetProfessor().Picture == null ? 
+                            new HtmlString(@"<span class='fa-stack fa-lg fa-5x'>
+                                  <i class='fa fa-square fa-stack-2x'></i>
+                                  <i class='fa fa-user fa-stack-1x fa-inverse'></i>
+                                </span>") : new HtmlString("<img style='width:130px;height:140px;padding-top:10px;border-radius: 25px;' src='"+ GetPictureUrl(GetProfessor()) +"' />")%>
+                        <div class="caption">
+                            <h4><%= string.Format("{0} {1}", GetProfessor().FirstName, GetProfessor().LastName) %> <br />
+                                <small><%= GetProfessor().Email %></small>
+                            </h4>
+                            <p>Professor</p>
+                        </div>
+                    </div>
+                </div>
+
+        <div class="col-md-3 text-center">
+                    <div class="thumbnail">
+                        <%= GetAssistant().Picture == null ? 
+                            new HtmlString(@"<span class='fa-stack fa-lg fa-5x'>
+                                  <i class='fa fa-square fa-stack-2x'></i>
+                                  <i class='fa fa-user fa-stack-1x fa-inverse'></i>
+                                </span>") : new HtmlString("<img style='width:130px;height:140px;padding-top:10px;border-radius: 25px;' src='"+ GetPictureUrl(GetAssistant()) +"' />")%>
+                        <div class="caption">
+                            <h4> <%= string.Format("{0} {1}", GetAssistant().FirstName, GetAssistant().LastName) %><br>
+                                <small><%= GetAssistant().Email %></small>
+                            </h4>
+                            <p>Assistant</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <hr />
+        <div class="row">
+        <asp:Repeater ID="ClassListRepeater" ItemType="Enlighten.Models.Member" SelectMethod="ClassListRepeater_GetData" runat="server">
+            <ItemTemplate>
+                <div class="col-md-3 text-center">
+                    <div class="thumbnail">
+                        <%# Item.Picture == null ? 
+                            new HtmlString(@"<span class='fa-stack fa-lg fa-5x'>
+                                  <i class='fa fa-square fa-stack-2x'></i>
+                                  <i class='fa fa-user fa-stack-1x fa-inverse'></i>
+                                </span>") : new HtmlString("<img style='width:130px;height:140px;padding-top:10px;border-radius: 25px;' src='"+ GetPictureUrl(Item) +"' />")%>
+
+
+                        <div class="caption">
+                            <h4><%# string.Format("{0} {1}", Item.FirstName, Item.LastName) %><br>
+                                <small><%# Item.Email %></small>
+                            </h4>
+                            <p>Student</p>
+                        </div>
+                    </div>
+                </div>
+            </ItemTemplate>
+        </asp:Repeater>
+            </div>
     </asp:Panel>
 </asp:Content>
 
