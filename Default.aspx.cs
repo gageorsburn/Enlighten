@@ -20,9 +20,6 @@ public partial class _Default : System.Web.UI.Page
         {
             AnonymousPanel.Visible = false;
             LoggedInPanel.Visible = true;
-
-            CourseRepeater.DataSource = AuthenticatedMemberCourses;
-            CourseRepeater.DataBind();
         }
         else
         {
@@ -33,7 +30,7 @@ public partial class _Default : System.Web.UI.Page
 
     protected void LoginButton_Click(object sender, EventArgs e)
     {
-        CourseDbContext dbContext = new CourseDbContext();
+        ApplicationDbContext dbContext = new ApplicationDbContext();
 
         string email = Email.Text;
         string password = Password.Text;
@@ -55,6 +52,8 @@ public partial class _Default : System.Web.UI.Page
             var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
             
             authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = RememberMe.Checked }, identity);
+
+            Response.Redirect("~/Default.aspx");
         }
         else
         {
@@ -62,15 +61,19 @@ public partial class _Default : System.Web.UI.Page
         }
     }
 
-    public ICollection<Course> AuthenticatedMemberCourses
+    public System.Collections.IEnumerable CourseRepeater_GetData()
     {
-        get
-        {
-            CourseDbContext dbContext = new CourseDbContext();
+        ApplicationDbContext dbContext = new ApplicationDbContext();
 
-            var email = Context.User.Identity.GetUserName();
-            Member authenticatedMember = dbContext.Members.Where(m => m.Email == email).FirstOrDefault();
-            return authenticatedMember.Courses;
-        }
+        var email = Context.User.Identity.GetUserName();
+        Member authenticatedMember = dbContext.Members.Where(m => m.Email == email).FirstOrDefault();
+        return authenticatedMember.Courses;
+    }
+
+    public Member GetProfessorById(int Id)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        return dbContext.Members.Where(m => m.Id == Id).FirstOrDefault();
     }
 }

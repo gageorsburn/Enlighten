@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="HeaderContent" runat="Server">
+<asp:Content ID="Header" ContentPlaceHolderID="HeaderContent" runat="Server">
     <header id="myCarousel" class="carousel slide">
         <ol class="carousel-indicators">
             <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -86,10 +86,27 @@
            
         </div>
 
-        <asp:Repeater ID="CourseRepeater" runat="server">
+        <asp:Repeater ID="CourseRepeater" runat="server" ItemType="Enlighten.Models.Course" SelectMethod="CourseRepeater_GetData" EnableTheming="true">
             <ItemTemplate>
-                 First Name: <%# Eval("Title") %><br />
+                <div class="row">
+                    <div class="col-md-7">
+                        <a href="portfolio-item.html">
+                            <img class="img-responsive img-hover" src="http://placehold.it/700x300" alt="">
+                        </a>
+                    &nbsp;</div>
+                    <div class="col-md-5">
+                        <h3><%# Item.Title %></h3>
+                        <h4><%# GetProfessorById(Item.ProfessorId).Email %></h4>
+                        <p><%# Item.Description %></p>
+                        <a class="btn btn-primary" href="/Course?Id=<%# Item.Id %>">View Course</i></a>
+                    </div>
+                </div>
+
             </ItemTemplate>
+            <SeparatorTemplate>
+                <hr />
+            </SeparatorTemplate>
+            
         </asp:Repeater>
         
     </asp:Panel>
