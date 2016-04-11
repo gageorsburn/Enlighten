@@ -57,35 +57,47 @@
                         </p>
                     </div>
                     <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-md-8">
                         <h4>Attachments</h4>
+                                </div>
 
                         <asp:Repeater ID="LessonAttachmentRepeater" ItemType="Enlighten.Models.LessonAttachment" SelectMethod="LessonAttachmentRepeater_GetData" OnItemCommand="LessonAttachmentRepeater_ItemCommand" runat="server">
                             <ItemTemplate>
-                            <i class="fa fa-file"></i>	&nbsp;
+                                <div class="col-md-8">
+                                <i class="fa fa-file"></i>&nbsp;
                                 <asp:LinkButton CommandName="Download" CommandArgument="<%# Item.Id %>" runat="server"><%# Item.Title %></asp:LinkButton>
+                                </div>
                             </ItemTemplate>
                             <SeparatorTemplate>
                                 <hr />
                             </SeparatorTemplate>
                         </asp:Repeater>
-                        <hr />
+                            </div>
+                        
+                                    <% if (IsMemberProfessor())
+                                        {%>
+                            <hr />
+                        <div class="row">
                         <div class="col-md-8">
-                        <div class="control-group form-group">
-                            <div class="controls">
-                                <% if (IsMemberProfessor()) {%>
-
-                                <asp:FileUpload CssClass="form-control" ID="LessonAttachmentUpload" runat="server" />
-                                <asp:LinkButton CssClass="btn btn-primary" ID="LessonAttachmentButton" OnClick="LessonAttachmentButton_Click" runat="server">Upload Attachment</asp:LinkButton>
-
-                                <%} %>
+                            <div class="control-group form-group">
+                                <div class="controls">
+                                    <asp:FileUpload CssClass="form-control" ID="LessonAttachmentUpload" runat="server" />
+                                    </div>
+                            </div>
+                            <div class="control-group form-group">
+                                <div class="controls">
+                            <asp:LinkButton CssClass="btn btn-primary" ID="LessonAttachmentButton" OnClick="LessonAttachmentButton_Click" runat="server">Upload Attachment</asp:LinkButton>
+                                    </div>
                                 </div>
                         </div>
-                            </div>
+                        </div>
+                                    <%} %>
                     </div>
                 </div>
                 <%} %>
             </div>
-        </div>
+   
     </asp:Panel>
 
     <asp:Panel ID="AssignmentPanel" runat="server">
