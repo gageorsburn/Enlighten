@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-
-
 namespace Enlighten.Models
 {
-    public class Lesson
+    public class LessonAttachment
     {
         public int Id { get; set; }
 
         public string Title { get; set; }
-        public string Content { get; set; }
+        public string FileType { get; set; }
 
-        public Course Course { get; set; }
+        public byte[] Data { get; set; }
 
-        public virtual ICollection<LessonAttachment> LessonAttachments { get; set; }
+        public Lesson Lesson { get; set; }
     }
 }

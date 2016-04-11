@@ -99,7 +99,9 @@
                     &nbsp;</div>
                     <div class="col-md-5">
                         <h3><%# Item.Title %></h3>
-                        <h4><%# GetProfessorById(Item.ProfessorId).Email %></h4>
+                        <h4><%# Item.Location %> - <%# Item.Time %></h4>
+                        <h5>Professor: <%# GetProfessorById(Item.ProfessorId).FullName %></h5>
+                        <h6>E-mail: <%# GetProfessorById(Item.ProfessorId).Email %></h6>
                         <p><%# Item.Description %></p>
                         <a class="btn btn-primary" href="/Course?Id=<%# Item.Id %>">View Course</i></a>
                     </div>
