@@ -6,6 +6,9 @@ using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Enlighten.Models;
+using System.Linq;
+using System.Collections.Generic;
 
 public partial class SiteMaster : MasterPage
 {
@@ -72,5 +75,11 @@ public partial class SiteMaster : MasterPage
     protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
     {
         Context.GetOwinContext().Authentication.SignOut();
+    }
+
+    public Member GetAuthenticatedMember()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+        return dbContext.Members.Where(m => m.Email == Context.User.Identity.Name).FirstOrDefault();
     }
 }

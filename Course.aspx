@@ -58,15 +58,29 @@
                     </div>
                     <div class="panel-footer">
                         <h4>Attachments</h4>
+
                         <asp:Repeater ID="LessonAttachmentRepeater" ItemType="Enlighten.Models.LessonAttachment" SelectMethod="LessonAttachmentRepeater_GetData" OnItemCommand="LessonAttachmentRepeater_ItemCommand" runat="server">
                             <ItemTemplate>
                             <i class="fa fa-file"></i>	&nbsp;
-                                <asp:LinkButton CommandArgument="<%# Item.Id %>" ID="LinkButton1" runat="server"><%# Item.Title %></asp:LinkButton>
+                                <asp:LinkButton CommandName="Download" CommandArgument="<%# Item.Id %>" runat="server"><%# Item.Title %></asp:LinkButton>
                             </ItemTemplate>
                             <SeparatorTemplate>
                                 <hr />
                             </SeparatorTemplate>
                         </asp:Repeater>
+                        <hr />
+                        <div class="col-md-8">
+                        <div class="control-group form-group">
+                            <div class="controls">
+                                <% if (IsMemberProfessor()) {%>
+
+                                <asp:FileUpload CssClass="form-control" ID="LessonAttachmentUpload" runat="server" />
+                                <asp:LinkButton CssClass="btn btn-primary" ID="LessonAttachmentButton" OnClick="LessonAttachmentButton_Click" runat="server">Upload Attachment</asp:LinkButton>
+
+                                <%} %>
+                                </div>
+                        </div>
+                            </div>
                     </div>
                 </div>
                 <%} %>

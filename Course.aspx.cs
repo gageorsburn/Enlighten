@@ -10,7 +10,7 @@ using System.IO;
 public partial class Course : System.Web.UI.Page
 {
     public Enlighten.Models.Course course;
-    public Enlighten.Models.Lesson currentLesson;
+    public Enlighten.Models.Member member;
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -27,7 +27,7 @@ public partial class Course : System.Web.UI.Page
 
         course = dbContext.Courses.Where(c => c.Id == courseId).FirstOrDefault();
 
-        Member member = dbContext.Members.Where(m => m.Email == Context.User.Identity.Name).FirstOrDefault();
+        member = dbContext.Members.Where(m => m.Email == Context.User.Identity.Name).FirstOrDefault();
 
         if (!member.Courses.Contains(course))
             Response.Redirect("~/Default.aspx");
@@ -145,7 +145,9 @@ public partial class Course : System.Web.UI.Page
         LessonTitleLabel.Text = lesson.Title;
         LessonContentLabel.Text = lesson.Content;
 
-        currentLesson = lesson;
+        Session["CurrentLesson"] = lesson;
+        //currentLesson = lesson;
+
         LessonAttachmentRepeater.DataBind();
 
         HomePanel.Visible = false;
@@ -156,10 +158,13 @@ public partial class Course : System.Web.UI.Page
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
 
-        if (currentLesson == null)
+        //if (currentLesson == null)
+        if(Session["CurrentLesson"] == null)
             return null;
 
-        int currentLessonId = currentLesson.Id;
+        //int currentLessonId = currentLesson.Id;
+        int currentLessonId = ((Lesson)Session["CurrentLesson"]).Id;
+
         return dbContext.LessonAttachments.Where(l => l.Lesson.Id == currentLessonId);
     }
 
@@ -167,21 +172,72 @@ public partial class Course : System.Web.UI.Page
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
 
-        int attachmentId = int.Parse(e.CommandArgument.ToString());
-
-        LessonAttachment lessonAttachment = dbContext.LessonAttachments.Where(la => la.Id == attachmentId).FirstOrDefault();
-
-        string fileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + "."+ lessonAttachment.FileType;
-        FileInfo fileInfo = new FileInfo(fileName);
-
-        using (var stream = fileInfo.OpenWrite())
+        if (e.CommandName == "Download")
         {
-            stream.Write(lessonAttachment.Data, 0, lessonAttachment.Data.Count());
-        }
+            int attachmentId = int.Parse(e.CommandArgument.ToString());
 
-        Response.ContentType = lessonAttachment.FileType;
-        Response.AppendHeader("Content-Disposition", string.Format("attachment; filename={0}.{1}", lessonAttachment.Title, lessonAttachment.FileType));
-        Response.TransmitFile(fileInfo.FullName);
-        Response.End();
+            LessonAttachment lessonAttachment = dbContext.LessonAttachments.Where(la => la.Id == attachmentId).FirstOrDefault();
+
+            string fileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + "." + lessonAttachment.FileType;
+            FileInfo fileInfo = new FileInfo(fileName);
+
+            using (var stream = fileInfo.OpenWrite())
+            {
+                stream.Write(lessonAttachment.Data, 0, lessonAttachment.Data.Count());
+            }
+
+            Response.ContentType = lessonAttachment.FileType;
+            Response.AppendHeader("Content-Disposition", string.Format("attachment; filename={0}.{1}", lessonAttachment.Title, lessonAttachment.FileType));
+            Response.TransmitFile(fileInfo.FullName);
+            Response.End();
+        }
+        else if (e.CommandName == "Upload")
+        {
+
+        }
+    }
+
+    public bool IsMemberProfessor()
+    {
+        return course.ProfessorId == member.Id;
+    }
+
+
+
+    protected void LessonAttachmentButton_Click(object sender, EventArgs e)
+    {
+        if(LessonAttachmentUpload.HasFile)
+        {
+            try
+            {
+                ApplicationDbContext dbContext = new ApplicationDbContext();
+
+                string fileName = Path.GetFileName(LessonAttachmentUpload.FileName);
+                string fileType = Path.GetExtension(fileName).Replace(".", "");
+
+                LessonAttachment lessonAttachment = new LessonAttachment();
+
+                lessonAttachment.Title = LessonAttachmentUpload.FileName;
+                lessonAttachment.FileType = fileType;
+                lessonAttachment.Data = LessonAttachmentUpload.FileBytes;
+
+                Lesson CurrentLesson = (Lesson)Session["CurrentLesson"];
+
+                lessonAttachment.Lesson = dbContext.Lessons.Where(l => l.Id == CurrentLesson.Id).FirstOrDefault();
+
+                dbContext.LessonAttachments.Add(lessonAttachment);
+
+                dbContext.SaveChanges();
+
+                LessonAttachmentRepeater.DataBind();
+
+                HomePanel.Visible = false;
+                LessonPanel.Visible = true;
+            }
+            catch(Exception exception)
+            {
+
+            }
+        }
     }
 }
