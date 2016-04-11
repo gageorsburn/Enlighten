@@ -34,6 +34,9 @@ public partial class Register : System.Web.UI.Page
 
         dbContext.SaveChanges();
 
-        Response.Redirect("~/Default.aspx");
+        SuccessLabel.ForeColor = System.Drawing.Color.Green;
+        SuccessLabel.Text = "Registered successfully!";
+
+        Response.AddHeader("REFRESH", "5;URL=Default.aspx");
     }
 }

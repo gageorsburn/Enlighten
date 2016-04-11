@@ -152,6 +152,8 @@ public partial class Course : System.Web.UI.Page
 
         HomePanel.Visible = false;
         LessonPanel.Visible = true;
+
+        ActivePanelLabel.Text = "Lessons";
     }
 
     public IEnumerable<Enlighten.Models.LessonAttachment> LessonAttachmentRepeater_GetData()
@@ -233,6 +235,8 @@ public partial class Course : System.Web.UI.Page
 
                 HomePanel.Visible = false;
                 LessonPanel.Visible = true;
+
+                ActivePanelLabel.Text = "Lessons";
             }
             catch(Exception exception)
             {
