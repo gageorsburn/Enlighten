@@ -22,5 +22,6 @@ namespace Enlighten.Models
         public virtual ICollection<Member> Students { get; set; }
         public virtual ICollection<Assignment> Assignments { get; set; }
         public virtual ICollection<Submission> Submissions { get; set; }    
+        public virtual ICollection<CourseArticle> CourseArticles { get; set; }
     }
 }

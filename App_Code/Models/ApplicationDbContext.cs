@@ -20,5 +20,6 @@ namespace Enlighten.Models
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<Submission> Submissions { get; set; }
         public DbSet<LessonAttachment> LessonAttachments { get; set; }
+        public DbSet<CourseArticle> CourseArticles { get; set; }
     }
 }
