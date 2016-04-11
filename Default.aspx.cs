@@ -76,6 +76,10 @@ public partial class _Default : System.Web.UI.Page
 
         var email = Context.User.Identity.GetUserName();
         Member authenticatedMember = dbContext.Members.Where(m => m.Email == email).FirstOrDefault();
+
+        if (authenticatedMember == null)
+            return null;
+
         return authenticatedMember.Courses;
     }
 

@@ -38,15 +38,26 @@
                 Time = "TR 2:00PM-3:00PM"
             };
 
-            LessonAttachment lessonAttachment = new LessonAttachment();
-            lessonAttachment.Title = "Lesson Attachment 2";
-            lessonAttachment.FileType = "txt";
-            lessonAttachment.Data = System.IO.File.ReadAllBytes(Server.MapPath("App_Data/File.txt"));
+            Lesson lesson = new Lesson()
+            {
+                Title = "Lesson 1",
+                Content = "Content for lesson 1.",
+                Course = course
+            };
 
-            applicationDbContext.LessonAttachments.Add(lessonAttachment);
+            LessonAttachment lessonAttachment = new LessonAttachment()
+            {
+                Title = "File",
+                FileType = "txt",
+                Data = System.IO.File.ReadAllBytes(Server.MapPath("App_Data/File.txt")),
+                Lesson = lesson
+            };
 
             applicationDbContext.Members.Add(member);
             applicationDbContext.Courses.Add(course);
+
+            applicationDbContext.Lessons.Add(lesson);
+            applicationDbContext.LessonAttachments.Add(lessonAttachment);
 
             applicationDbContext.SaveChanges();
         }
