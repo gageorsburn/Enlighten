@@ -97,7 +97,7 @@
                 </div>
                 <%} %>
             </div>
-   
+   </div>
     </asp:Panel>
 
     <asp:Panel ID="AssignmentPanel" runat="server">

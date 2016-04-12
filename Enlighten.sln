@@ -3,18 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Enlighten", "..\..\WebSites\Enlighten\", "{AF6D29EC-BBC8-44E8-A474-B62964448A83}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Enlighten", ".\", "{AF6D29EC-BBC8-44E8-A474-B62964448A83}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_53224"
-		Debug.AspNetCompiler.PhysicalPath = "..\..\WebSites\Enlighten\"
+		Debug.AspNetCompiler.PhysicalPath = ".\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53224\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/localhost_53224"
-		Release.AspNetCompiler.PhysicalPath = "..\..\WebSites\Enlighten\"
+		Release.AspNetCompiler.PhysicalPath = ".\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53224\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"

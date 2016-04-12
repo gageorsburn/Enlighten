@@ -6,6 +6,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Enlighten.Models;
 using System.IO;
+using CodeKicker.BBCode;
+
 
 public partial class Course : System.Web.UI.Page
 {
@@ -143,7 +145,7 @@ public partial class Course : System.Web.UI.Page
         Lesson lesson = dbContext.Lessons.Where(l => l.Id == lessonId).FirstOrDefault();
 
         LessonTitleLabel.Text = lesson.Title;
-        LessonContentLabel.Text = lesson.Content;
+        LessonContentLabel.Text = BBCode.ToHtml(lesson.Content);
 
         Session["CurrentLesson"] = lesson;
         //currentLesson = lesson;
