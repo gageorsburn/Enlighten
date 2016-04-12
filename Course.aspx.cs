@@ -145,7 +145,15 @@ public partial class Course : System.Web.UI.Page
         Lesson lesson = dbContext.Lessons.Where(l => l.Id == lessonId).FirstOrDefault();
 
         LessonTitleLabel.Text = lesson.Title;
-        LessonContentLabel.Text = BBCode.ToHtml(lesson.Content);
+
+        try
+        {
+            LessonContentLabel.Text = BBCode.ToHtml(lesson.Content);
+        }
+        catch
+        {
+            LessonContentLabel.Text = "Some tags did not load correctly<br />" + lesson.Content;
+        }
 
         Session["CurrentLesson"] = lesson;
         //currentLesson = lesson;
