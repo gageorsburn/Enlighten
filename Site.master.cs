@@ -8,7 +8,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Enlighten.Models;
 using System.Linq;
-using System.Collections.Generic;
 
 public partial class SiteMaster : MasterPage
 {

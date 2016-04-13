@@ -34,6 +34,13 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="list-group">
+                    <% if (IsMemberProfessor())
+                        {%>
+                    <asp:LinkButton ID="NewLessonButton" CssClass="list-group-item" runat="server">Create New Lesson</asp:LinkButton>
+
+                    <!--TODO: Add Modal To Create New Lessons-->
+
+                    <% } %>
                     <asp:Repeater ID="LessonRepeater" ItemType="Enlighten.Models.Lesson" SelectMethod="LessonRepeater_GetData" OnItemCommand="LessonRepeater_ItemCommand" runat="server">
                         <ItemTemplate>
                             <asp:LinkButton CommandArgument="<%# Item.Id %>" CssClass="list-group-item" runat="server"><%# Item.Title %></asp:LinkButton>

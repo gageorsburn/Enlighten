@@ -248,7 +248,7 @@ public partial class Course : System.Web.UI.Page
 
                 ActivePanelLabel.Text = "Lessons";
             }
-            catch(Exception exception)
+            catch
             {
 
             }
