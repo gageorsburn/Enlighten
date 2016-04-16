@@ -11,7 +11,7 @@
                 <small>
                     <asp:Label ID="ActivePanelLabel" runat="server" Text="Label"></asp:Label></small>
             </h1>
-            <ol class="breadcrumb">
+            <ol class="breadcrumb text-center">
                 <li class="active">
                     <asp:LinkButton ID="HomeHyperLink" runat="server" OnClick="HomeHyperLink_Click">Course Home</asp:LinkButton></li>
                 <li>
@@ -27,7 +27,38 @@
     </div>
 
     <asp:Panel ID="HomePanel" runat="server">
-        Home
+        <asp:Repeater ID="CourseArticleRepeater" ItemType="Enlighten.Models.CourseArticle" OnItemCommand="CourseArticleRepeater_ItemCommand" SelectMethod="CourseArticleRepeater_GetData" runat="server">
+            <HeaderTemplate>
+                <div class="row">
+                    <div class="col-md-8">
+            </HeaderTemplate>
+            <ItemTemplate>
+                <h2>
+                    <%# Item.Title %>
+                </h2>
+                <p class="lead">
+                    by <a href="#"><%# Item.Author?.FirstName %></a>
+                </p>
+                <p><i class="fa fa-clock-o"></i> Posted on <%# Item.PostedOn %></p>
+                <hr />
+                <p><%# Item.Content %></p>
+            </ItemTemplate>
+            <SeparatorTemplate>
+                <hr />
+            </SeparatorTemplate>
+            <FooterTemplate>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="well">
+                        test
+                     </div>
+                    </div>
+                </div>
+
+
+            </FooterTemplate>
+        </asp:Repeater>
     </asp:Panel>
 
     <asp:Panel ID="LessonPanel" runat="server">
@@ -36,7 +67,42 @@
                 <div class="list-group">
                     <% if (IsMemberProfessor())
                         {%>
-                    <asp:LinkButton ID="NewLessonButton" CssClass="list-group-item" runat="server">Create New Lesson</asp:LinkButton>
+                    <div id="newlessonmodal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Create New Lesson</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <!--<div class="col-md-offset-4 col-md-4">-->
+
+                                        <div class="control-group form-group">
+                                            <div class="controls">
+                                                <label>Lesson Title</label>
+                                                <asp:TextBox ID="NewLessonTitle" CssClass="form-control" runat="server"></asp:TextBox>
+                                                <p class="help-block"></p>
+                                            </div>
+                                        </div>
+
+                                        <div class="control-group form-group">
+                                            <div class="controls">
+                                                <label>Lesson Content</label>
+                                                <asp:TextBox ID="NewLessonContent" TextMode="MultiLine" CssClass="form-control" runat="server"></asp:TextBox>
+                                                <p class="help-block"></p>
+                                            </div>
+                                        </div>
+
+                                    <!--</div>-->
+                                </div>
+                                <div class="modal-footer">
+                                    <asp:Button ID="NewLessonButton" CssClass="btn btn-primary" OnClick="NewLessonButton_Click" runat="server" Text="Create New Lesson" />
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a class="btn list-group-item" data-toggle="modal" data-target="#newlessonmodal">Create New Lesson</a>
 
                     <!--TODO: Add Modal To Create New Lessons-->
 
@@ -56,7 +122,14 @@
                     <div class="panel-heading text-center">
                         <h2>
                             <asp:Label ID="LessonTitleLabel" runat="server" Text=""></asp:Label>
+
+                            <% if (IsMemberProfessor()) { %>
+                            <span class="fa">
+                                <asp:LinkButton ID="DeleteLessonLink" OnClick="DeleteLessonLink_Click" CssClass="fa-times" runat="server"></asp:LinkButton>
+                            </span>
+                            <% } %>
                         </h2>
+                        
                     </div>
                     <div class="panel-body">
                         <p>

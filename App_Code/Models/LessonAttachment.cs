@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace Enlighten.Models
 {
@@ -14,6 +15,7 @@ namespace Enlighten.Models
 
         public byte[] Data { get; set; }
 
+        [Required]
         public Lesson Lesson { get; set; }
     }
 }

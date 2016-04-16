@@ -214,8 +214,6 @@ public partial class Course : System.Web.UI.Page
         return course.ProfessorId == member.Id;
     }
 
-
-
     protected void LessonAttachmentButton_Click(object sender, EventArgs e)
     {
         if(LessonAttachmentUpload.HasFile)
@@ -253,5 +251,61 @@ public partial class Course : System.Web.UI.Page
 
             }
         }
+    }
+
+    protected void NewLessonButton_Click(object sender, EventArgs e)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        Lesson lesson = new Lesson();
+
+        lesson.Title = NewLessonTitle.Text;
+        lesson.Content = NewLessonContent.Text;
+        lesson.Course = dbContext.Courses.Where(c => c.Id == course.Id).FirstOrDefault();
+
+        dbContext.Lessons.Add(lesson);
+        dbContext.SaveChanges();
+        
+        LessonRepeater.DataBind();
+
+        HomePanel.Visible = false;
+        LessonPanel.Visible = true;
+
+        ActivePanelLabel.Text = "Lessons";
+    }
+
+    protected void DeleteLessonLink_Click(object sender, EventArgs e)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        Lesson lesson = (Lesson)Session["CurrentLesson"];
+
+        dbContext.Lessons.Remove(dbContext.Lessons.Where(l => l.Id == lesson.Id).FirstOrDefault());
+        dbContext.SaveChanges();
+
+        LessonTitleLabel.Text = "";
+        LessonContentLabel.Text = "";
+
+        LessonRepeater.DataBind();
+        LessonAttachmentRepeater.DataBind();
+
+        HomePanel.Visible = false;
+        LessonPanel.Visible = true;
+
+        ActivePanelLabel.Text = "Lessons";
+    }
+
+    protected void CourseArticleRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
+    {
+
+    }
+
+    public IEnumerable<Enlighten.Models.CourseArticle> CourseArticleRepeater_GetData()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        //Enlighten.Models.Course currentCourse = dbContext.Courses.Where(c => c.Id == course.Id).FirstOrDefault();
+
+        return dbContext.CourseArticles.Where(c => c.Course.Id == course.Id);
     }
 }
