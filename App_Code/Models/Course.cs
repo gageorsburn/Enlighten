@@ -18,6 +18,8 @@ namespace Enlighten.Models
         public int ProfessorId { get; set; }
         public int AssistantId { get; set; }
 
+        public virtual ICollection<CourseUrl> CourseUrls { get; set; }
+
         public virtual ICollection<Lesson> Lessons { get; set; }
         public virtual ICollection<Member> Students { get; set; }
         public virtual ICollection<Assignment> Assignments { get; set; }

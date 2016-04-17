@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using Enlighten.Models;
 using System.IO;
 using CodeKicker.BBCode;
+using System.Data.Entity;
 
 
 public partial class Course : System.Web.UI.Page
@@ -305,7 +306,13 @@ public partial class Course : System.Web.UI.Page
         ApplicationDbContext dbContext = new ApplicationDbContext();
 
         //Enlighten.Models.Course currentCourse = dbContext.Courses.Where(c => c.Id == course.Id).FirstOrDefault();
+        //dbContext.CourseArticles.Include(c => c.Author);
+        return dbContext.CourseArticles.Include(c => c.Author).Where(c => c.Course.Id == course.Id).OrderBy(a => a.PostedOn);
+    }
 
-        return dbContext.CourseArticles.Where(c => c.Course.Id == course.Id);
+    public IEnumerable<Enlighten.Models.CourseUrl> CourseUrlRepeater_GetData()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+        return dbContext.CourseUrls.Where(c => c.Course.Id == course.Id);
     }
 }

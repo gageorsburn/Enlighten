@@ -37,7 +37,7 @@
                     <%# Item.Title %>
                 </h2>
                 <p class="lead">
-                    by <a href="#"><%# Item.Author?.FirstName %></a>
+                    by <a href="#"><%# Item.Author?.FullName %></a>
                 </p>
                 <p><i class="fa fa-clock-o"></i> Posted on <%# Item.PostedOn %></p>
                 <hr />
@@ -47,16 +47,23 @@
                 <hr />
             </SeparatorTemplate>
             <FooterTemplate>
+                <asp:Label runat="server" Visible='<%# ((Repeater)Container.NamingContainer).Items.Count == 0 %>' Text="The professor has not posted any news!"></asp:Label>
                 </div>
-
                 <div class="col-md-4">
                     <div class="well">
-                        test
-                     </div>
+                        <asp:Repeater ID="CourseUrlRepeater" ItemType="Enlighten.Models.CourseUrl" SelectMethod="CourseUrlRepeater_GetData" runat="server">
+                            <HeaderTemplate>
+                                <h3 class="text-center">Important Urls</h3>
+                            </HeaderTemplate>
+                            <ItemTemplate>
+                                <asp:HyperLink NavigateUrl="<%# Item.Url %>" runat="server"><%# Item.Url %></asp:HyperLink>
+                            </ItemTemplate>
+                            <FooterTemplate>
+                            </FooterTemplate>
+                        </asp:Repeater>
                     </div>
                 </div>
-
-
+                </div>
             </FooterTemplate>
         </asp:Repeater>
     </asp:Panel>
@@ -76,21 +83,21 @@
                                 <div class="modal-body">
                                     <!--<div class="col-md-offset-4 col-md-4">-->
 
-                                        <div class="control-group form-group">
-                                            <div class="controls">
-                                                <label>Lesson Title</label>
-                                                <asp:TextBox ID="NewLessonTitle" CssClass="form-control" runat="server"></asp:TextBox>
-                                                <p class="help-block"></p>
-                                            </div>
+                                    <div class="control-group form-group">
+                                        <div class="controls">
+                                            <label>Lesson Title</label>
+                                            <asp:TextBox ID="NewLessonTitle" CssClass="form-control" runat="server"></asp:TextBox>
+                                            <p class="help-block"></p>
                                         </div>
+                                    </div>
 
-                                        <div class="control-group form-group">
-                                            <div class="controls">
-                                                <label>Lesson Content</label>
-                                                <asp:TextBox ID="NewLessonContent" TextMode="MultiLine" CssClass="form-control" runat="server"></asp:TextBox>
-                                                <p class="help-block"></p>
-                                            </div>
+                                    <div class="control-group form-group">
+                                        <div class="controls">
+                                            <label>Lesson Content</label>
+                                            <asp:TextBox ID="NewLessonContent" TextMode="MultiLine" CssClass="form-control" runat="server"></asp:TextBox>
+                                            <p class="help-block"></p>
                                         </div>
+                                    </div>
 
                                     <!--</div>-->
                                 </div>
@@ -123,13 +130,14 @@
                         <h2>
                             <asp:Label ID="LessonTitleLabel" runat="server" Text=""></asp:Label>
 
-                            <% if (IsMemberProfessor()) { %>
+                            <% if (IsMemberProfessor())
+                            { %>
                             <span class="fa">
                                 <asp:LinkButton ID="DeleteLessonLink" OnClick="DeleteLessonLink_Click" CssClass="fa-times" runat="server"></asp:LinkButton>
                             </span>
                             <% } %>
                         </h2>
-                        
+
                     </div>
                     <div class="panel-body">
                         <p>
@@ -139,45 +147,45 @@
                     <div class="panel-footer">
                         <div class="row">
                             <div class="col-md-8">
-                        <h4>Attachments</h4>
-                                </div>
+                                <h4>Attachments</h4>
+                            </div>
 
-                        <asp:Repeater ID="LessonAttachmentRepeater" ItemType="Enlighten.Models.LessonAttachment" SelectMethod="LessonAttachmentRepeater_GetData" OnItemCommand="LessonAttachmentRepeater_ItemCommand" runat="server">
-                            <ItemTemplate>
-                                <div class="col-md-8">
-                                <i class="fa fa-file"></i>&nbsp;
+                            <asp:Repeater ID="LessonAttachmentRepeater" ItemType="Enlighten.Models.LessonAttachment" SelectMethod="LessonAttachmentRepeater_GetData" OnItemCommand="LessonAttachmentRepeater_ItemCommand" runat="server">
+                                <ItemTemplate>
+                                    <div class="col-md-8">
+                                        <i class="fa fa-file"></i>&nbsp;
                                 <asp:LinkButton CommandName="Download" CommandArgument="<%# Item.Id %>" runat="server"><%# Item.Title %></asp:LinkButton>
-                                </div>
-                            </ItemTemplate>
-                            <SeparatorTemplate>
-                                <hr />
-                            </SeparatorTemplate>
-                        </asp:Repeater>
-                            </div>
-                        
-                                    <% if (IsMemberProfessor())
-                                        {%>
-                            <hr />
+                                    </div>
+                                </ItemTemplate>
+                                <SeparatorTemplate>
+                                    <hr />
+                                </SeparatorTemplate>
+                            </asp:Repeater>
+                        </div>
+
+                        <% if (IsMemberProfessor())
+                            {%>
+                        <hr />
                         <div class="row">
-                        <div class="col-md-8">
-                            <div class="control-group form-group">
-                                <div class="controls">
-                                    <asp:FileUpload CssClass="form-control" ID="LessonAttachmentUpload" runat="server" />
-                                    </div>
-                            </div>
-                            <div class="control-group form-group">
-                                <div class="controls">
-                            <asp:LinkButton CssClass="btn btn-primary" ID="LessonAttachmentButton" OnClick="LessonAttachmentButton_Click" runat="server">Upload Attachment</asp:LinkButton>
+                            <div class="col-md-8">
+                                <div class="control-group form-group">
+                                    <div class="controls">
+                                        <asp:FileUpload CssClass="form-control" ID="LessonAttachmentUpload" runat="server" />
                                     </div>
                                 </div>
+                                <div class="control-group form-group">
+                                    <div class="controls">
+                                        <asp:LinkButton CssClass="btn btn-primary" ID="LessonAttachmentButton" OnClick="LessonAttachmentButton_Click" runat="server">Upload Attachment</asp:LinkButton>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        </div>
-                                    <%} %>
+                        <%} %>
                     </div>
                 </div>
                 <%} %>
             </div>
-   </div>
+        </div>
     </asp:Panel>
 
     <asp:Panel ID="AssignmentPanel" runat="server">
