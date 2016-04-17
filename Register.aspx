@@ -3,6 +3,7 @@
 <asp:Content ID="Header" ContentPlaceHolderID="HeaderContent" Runat="Server"></asp:Content>
 
 <asp:Content ID="Content" ContentPlaceHolderID="MainContent" Runat="Server">
+    <!-- This page is pretty basic. Comments shouldn't be needed to understand the code. -->
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">Register</h1>
