@@ -12,11 +12,14 @@ namespace Enlighten.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public string Section { get; set; }
-        public string Location { get; set; }
+
         public string Time { get; set; }
 
         public int ProfessorId { get; set; }
         public int AssistantId { get; set; }
+        public int RoomNumber { get; set; }
+
+        public CourseLocation Location { get; set; }
 
         public virtual ICollection<CourseUrl> CourseUrls { get; set; }
 

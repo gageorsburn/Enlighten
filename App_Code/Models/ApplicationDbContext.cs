@@ -22,5 +22,6 @@ namespace Enlighten.Models
         public DbSet<LessonAttachment> LessonAttachments { get; set; }
         public DbSet<CourseArticle> CourseArticles { get; set; }
         public DbSet<CourseUrl> CourseUrls { get; set; }
+        public DbSet<CourseLocation> CourseLocations { get; set; }
     }
 }
