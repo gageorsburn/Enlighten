@@ -93,9 +93,15 @@
             <ItemTemplate>
                 <div class="row">
                     <div class="col-md-7">
-                        <a href="portfolio-item.html">
-                            <img class="img-responsive img-hover" src="http://placehold.it/700x300" alt="">
-                        </a>
+                        <div id="map<%# Item.Location.BuildingName %>" style="width:650px;height:300px;"></div>
+
+                        <script>
+                            if(window.locationArray == null)
+                                window.locationArray = new Array();
+
+                            var x = { name: '<%# Item.Location.BuildingName %>', lat: <%# Item.Location.Latitude %>, long: <%# Item.Location.Longitude %>};
+                            window.locationArray.push(x);
+                        </script>
                     &nbsp;</div>
                     <div class="col-md-5">
                         <h3><%# Item.Title %></h3>
@@ -113,6 +119,29 @@
             </SeparatorTemplate>
             <FooterTemplate>
                 <asp:Label ID="lblEmptyData" runat="server" Visible='<%# ((Repeater)Container.NamingContainer).Items.Count == 0 %>' Text="Not enrolled in any classes!"></asp:Label>
+
+                <script>
+                    function initMap()
+                    {
+                        if(window.locationArray != null)
+                        {
+                            for(var i = 0; i < window.locationArray.length; i++)
+                            {
+                                var position = { lat: window.locationArray[i].lat, lng: window.locationArray[i].long };
+                                var map = new google.maps.Map(document.getElementById('map' + window.locationArray[i].name), {
+                                    center: position,
+                                    zoom: 16
+                                });
+
+                                var marker = new google.maps.Marker({
+                                    position: position,
+                                    map: map,
+                                    title: window.locationArray[i].name
+                                });
+                            }
+                        }
+                    }
+                </script>
             </FooterTemplate>
         </asp:Repeater>
         
