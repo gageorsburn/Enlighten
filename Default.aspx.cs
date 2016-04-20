@@ -12,6 +12,8 @@ using Enlighten.Models;
 using Microsoft.Owin.Security;
 using System.Security.Claims;
 
+using System.Data.Entity;
+
 public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
@@ -104,7 +106,8 @@ public partial class _Default : System.Web.UI.Page
             return null;
 
         /* Return all the courses the member is enrolled in. */
-        return authenticatedMember.Courses;
+        return dbContext.Courses.Include(c => c.Location).Where(m => m.Students.Any(x => x.Id == authenticatedMember.Id));
+        //return authenticatedMember.Courses;
     }
 
     public Member GetProfessorById(int Id)

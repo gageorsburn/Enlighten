@@ -34,7 +34,7 @@
                 ProfessorId = 1,
                 AssistantId = 1,
                 Description = "Computer programming for organizations from the perspective of integrating the Internet into business information systems. Fundamental principles and constructs of programming and applied programming in the business environment.",
-                Location = "G100",
+                
                 Time = "TR 2:00PM-3:00PM"
             };
 

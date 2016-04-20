@@ -8,7 +8,7 @@ namespace Enlighten.Models
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext() : base("EnlightenDB")
+        public ApplicationDbContext() : base("DefaultConnection")
         {
 
         }
