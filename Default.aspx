@@ -105,7 +105,7 @@
                     &nbsp;</div>
                     <div class="col-md-5">
                         <h3><%# Item.Title %></h3>
-                        <h4><%# Item.Location.BuildingName %> - <%# Item.Time %></h4>
+                        <h4><%# Item.Location.BuildingName %> <%# Item.RoomNumber %> - <%# Item.Time %></h4>
                         <h5>Professor: <%# GetProfessorById(Item.ProfessorId).FullName %></h5>
                         <h6>E-mail: <%# GetProfessorById(Item.ProfessorId).Email %></h6>
                         <p><%# Item.Description %></p>
