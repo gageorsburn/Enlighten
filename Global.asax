@@ -12,8 +12,9 @@
         RouteConfig.RegisterRoutes(RouteTable.Routes);
         BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+        
+        Database.SetInitializer(new DropCreateDatabaseAlways<ApplicationDbContext>());
         ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-
         if(applicationDbContext.Members.Count() == 0)
         {
             Member member = new Member()
