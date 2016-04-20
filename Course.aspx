@@ -37,7 +37,7 @@
                     <%# Item.Title %>
                 </h2>
                 <p class="lead">
-                    by <a href="#"><%# Item.Author?.FullName %></a>
+                    by <a href="#"><%# Item.Author.FullName %></a>
                 </p>
                 <p><i class="fa fa-clock-o"></i> Posted on <%# Item.PostedOn %></p>
                 <hr />
