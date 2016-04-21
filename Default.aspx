@@ -10,7 +10,7 @@
 
         <div class="carousel-inner">
             <div class="item active">
-                <img src="https://media.licdn.com/mpr/mpr/shrinknp_674_240/p/3/005/019/361/1d4f19f.png" />
+                <img src="http://wallpaper.zone/img/2783494.jpg" />
                 <div class="carousel-caption">
                     <h2>Caption 1</h2>
                 </div>
