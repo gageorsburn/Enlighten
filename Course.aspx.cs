@@ -23,9 +23,9 @@ public partial class Course : System.Web.UI.Page
             Response.Redirect("~/Default.aspx");
 
         int courseId;
-        bool success = int.TryParse(Request.QueryString["Id"], out courseId);
+        bool success = int.TryParse(Page.RouteData.Values["Id"].ToString(), out courseId);
 
-        if(!success)
+        if (!success)
             Response.Redirect("~/Default.aspx");
 
         ApplicationDbContext dbContext = new ApplicationDbContext();
@@ -511,27 +511,32 @@ public partial class Course : System.Web.UI.Page
 
     protected void SubmissionRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
     {
-        ApplicationDbContext dbContext = new ApplicationDbContext();
-
         if (e.CommandName == "Download")
         {
             int submissionId = int.Parse(e.CommandArgument.ToString());
 
-            Submission submission = dbContext.Submissions.Where(la => la.Id == submissionId).FirstOrDefault();
-
-            string fileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + "." + submission.FileType;
-            FileInfo fileInfo = new FileInfo(fileName);
-
-            using (var stream = fileInfo.OpenWrite())
-            {
-                stream.Write(submission.Data, 0, submission.Data.Count());
-            }
-
-            Response.ContentType = submission.FileType;
-            Response.AppendHeader("Content-Disposition", string.Format("attachment; filename={0}.{1}", submission.Title, submission.FileType));
-            Response.TransmitFile(fileInfo.FullName);
-            Response.End();
+            DownloadSubmission(submissionId);
         }
+    }
+
+    public void DownloadSubmission(int submissionId)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        Submission submission = dbContext.Submissions.Where(la => la.Id == submissionId).FirstOrDefault();
+
+        string fileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + "." + submission.FileType;
+        FileInfo fileInfo = new FileInfo(fileName);
+
+        using (var stream = fileInfo.OpenWrite())
+        {
+            stream.Write(submission.Data, 0, submission.Data.Count());
+        }
+
+        Response.ContentType = submission.FileType;
+        Response.AppendHeader("Content-Disposition", string.Format("attachment; filename={0}.{1}", submission.Title, submission.FileType));
+        Response.TransmitFile(fileInfo.FullName);
+        Response.End();
     }
 
     // The return type can be changed to IEnumerable, however to support
@@ -611,5 +616,11 @@ public partial class Course : System.Web.UI.Page
         AssignmentPanel.Visible = true;
 
         ActivePanelLabel.Text = "Assignments";
+    }
+
+    protected void DownloadStudentSubmissionLink_Command(object sender, CommandEventArgs e)
+    {
+        int submissionId = int.Parse(e.CommandArgument.ToString());
+        DownloadSubmission(submissionId);
     }
 }

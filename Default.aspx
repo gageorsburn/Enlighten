@@ -109,7 +109,7 @@
                         <h5>Professor: <%# GetProfessorById(Item.ProfessorId).FullName %></h5>
                         <h6>E-mail: <%# GetProfessorById(Item.ProfessorId).Email %></h6>
                         <p><%# Item.Description %></p>
-                        <a class="btn btn-primary" href="/Course?Id=<%# Item.Id %>">View Course</i></a>
+                        <a class="btn btn-primary" href="/Course/<%# Item.Id %>">View Course</i></a>
                     </div>
                 </div>
 

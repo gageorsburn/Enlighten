@@ -323,7 +323,7 @@
                    <div class="panel-footer">
                        <div class="row">
                            <div class="col-md-8">
-                               <h4>Submission</h4>
+                               <h4>Submissions</h4>
                            </div>
                        </div>
                       
@@ -356,12 +356,15 @@
                        <% }
     else { %>
                        
-
-                       <asp:GridView ID="GradeSubmissionView" ItemType="Enlighten.Models.Submission" AutoGenerateColumns="false" AutoGenerateEditButton="true" SelectMethod="GradeSubmissionView_GetData" UpdateMethod="GradeSubmissionView_UpdateItem" OnRowEditing="GradeSubmissionView_RowEditing" OnRowCancelingEdit="GradeSubmissionView_RowCancelingEdit"  OnRowUpdating="GradeSubmissionView_RowUpdating" DataKeyNames="Id" runat="server">
+                       <div class="table-responsive">
+                       <asp:GridView ID="GradeSubmissionView" ItemType="Enlighten.Models.Submission" AutoGenerateColumns="false" AutoGenerateEditButton="true" SelectMethod="GradeSubmissionView_GetData" UpdateMethod="GradeSubmissionView_UpdateItem" OnRowEditing="GradeSubmissionView_RowEditing" OnRowCancelingEdit="GradeSubmissionView_RowCancelingEdit"  OnRowUpdating="GradeSubmissionView_RowUpdating" DataKeyNames="Id" CssClass="table" runat="server">
                            <Columns>
                                <asp:TemplateField HeaderText="Title">
                                    <ItemTemplate>
-                                       <%# Item.Title %>
+                                       <asp:LinkButton ID="DownloadStudentSubmissionLink" CommandArgument="<%# Item.Id %>" OnCommand="DownloadStudentSubmissionLink_Command" runat="server">
+                                           <%# Item.Title %>
+                                       </asp:LinkButton>
+                                       
                                    </ItemTemplate>
                                </asp:TemplateField>
                                <asp:TemplateField HeaderText="Score">
@@ -379,6 +382,7 @@
                                </asp:TemplateField>
                            </Columns>
                        </asp:GridView>
+                           </div>
                        <asp:ValidationSummary ID="ValidationSummary1" ShowModelStateErrors="true" runat="server" />
                        <% } %>
                    </div>

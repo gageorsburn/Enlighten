@@ -10,9 +10,13 @@ namespace Enlighten
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            routes.MapPageRoute("Course", "Course/{Id}", "~/Course.aspx");
+
             var settings = new FriendlyUrlSettings();
             settings.AutoRedirectMode = RedirectMode.Permanent;
             routes.EnableFriendlyUrls(settings);
+
+            
         }
     }
 }
