@@ -92,8 +92,8 @@
         <asp:Repeater ID="CourseRepeater" runat="server" ItemType="Enlighten.Models.Course" SelectMethod="CourseRepeater_GetData" EnableTheming="true">
             <ItemTemplate>
                 <div class="row">
-                    <div class="col-md-7">
-                        <div id="map<%# Item.Location.BuildingName %>" style="width:650px;height:300px;"></div>
+                    <div class="col-md-7" id="map<%# Item.Location.BuildingName %>" style="height:300px;">
+                        <%--<div id="map<%# Item.Location.BuildingName %>" class="col-md-"></div>--%>
 
                         <script>
                             if(window.locationArray == null)
@@ -129,6 +129,7 @@
                             {
                                 var position = { lat: window.locationArray[i].lat, lng: window.locationArray[i].long };
                                 var map = new google.maps.Map(document.getElementById('map' + window.locationArray[i].name), {
+                                    scrollwheel: false,
                                     center: position,
                                     zoom: 16
                                 });
