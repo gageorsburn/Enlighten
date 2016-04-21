@@ -89,7 +89,7 @@
            
         </div>
 
-        <asp:Repeater ID="CourseRepeater" runat="server" ItemType="Enlighten.Models.Course" SelectMethod="CourseRepeater_GetData" EnableTheming="true">
+        <asp:Repeater ID="CourseRepeater" runat="server" ItemType="Enlighten.Models.Course" SelectMethod="CourseRepeater_GetData">
             <ItemTemplate>
                 <div class="row">
                     <div class="col-md-7" id="map<%# Item.Location.BuildingName %>" style="height:300px;">
@@ -145,7 +145,6 @@
                 </script>
             </FooterTemplate>
         </asp:Repeater>
-        
     </asp:Panel>
 
 </asp:Content>

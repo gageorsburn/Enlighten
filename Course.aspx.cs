@@ -8,7 +8,9 @@ using Enlighten.Models;
 using System.IO;
 using CodeKicker.BBCode;
 using System.Data.Entity;
-
+using System.Data.Entity.Validation;
+using System.Diagnostics;
+using System.Web.ModelBinding;
 
 public partial class Course : System.Web.UI.Page
 {
@@ -32,7 +34,7 @@ public partial class Course : System.Web.UI.Page
 
         member = dbContext.Members.Where(m => m.Email == Context.User.Identity.Name).FirstOrDefault();
 
-        if (!member.Courses.Contains(course))
+        if (!member.Courses.Contains(course) && course.ProfessorId != member.Id)
             Response.Redirect("~/Default.aspx");
 
         ActivePanelLabel.Text = "Course Home";
@@ -273,6 +275,9 @@ public partial class Course : System.Web.UI.Page
         LessonPanel.Visible = true;
 
         ActivePanelLabel.Text = "Lessons";
+
+        NewLessonTitle.Text = "";
+        NewLessonContent.Text = "";
     }
 
     protected void DeleteLessonLink_Click(object sender, EventArgs e)
@@ -296,11 +301,6 @@ public partial class Course : System.Web.UI.Page
         ActivePanelLabel.Text = "Lessons";
     }
 
-    protected void CourseArticleRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
-    {
-
-    }
-
     public IEnumerable<Enlighten.Models.CourseArticle> CourseArticleRepeater_GetData()
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
@@ -314,5 +314,302 @@ public partial class Course : System.Web.UI.Page
     {
         ApplicationDbContext dbContext = new ApplicationDbContext();
         return dbContext.CourseUrls.Where(c => c.Course.Id == course.Id);
+    }
+
+    protected void NewArticleButton_Click(object sender, EventArgs e)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        CourseArticle courseArticle = new CourseArticle();
+
+        courseArticle.Title = NewArticleTitle.Text;
+        courseArticle.Content = NewArticleContent.Text;
+        courseArticle.PostedOn = DateTime.Now;
+        courseArticle.Author = dbContext.Members.Where(m => m.Id == member.Id).FirstOrDefault();
+        courseArticle.Course = dbContext.Courses.Where(c => c.Id == course.Id).FirstOrDefault();
+
+        dbContext.CourseArticles.Add(courseArticle);
+
+        dbContext.SaveChanges();
+
+        CourseArticleRepeater.DataBind();
+
+        NewArticleTitle.Text = "";
+        NewArticleContent.Text = "";
+    }
+
+    protected void DeleteArticleLink_Command(object sender, CommandEventArgs e)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        int articleId = int.Parse(e.CommandArgument.ToString());
+
+        CourseArticle courseArticle = dbContext.CourseArticles.Where(c => c.Id == articleId).FirstOrDefault();
+
+        dbContext.CourseArticles.Remove(courseArticle);
+        dbContext.SaveChanges();
+
+        CourseArticleRepeater.DataBind();
+    }
+
+    public IEnumerable<Enlighten.Models.Assignment> AssignmentRepeater_GetData()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+        return dbContext.Courses.Where(c => c.Id == course.Id).FirstOrDefault().Assignments.Reverse();
+    }
+
+    protected void AssignmentRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        int assignmentId = int.Parse(e.CommandArgument.ToString());
+
+        Assignment assignment = dbContext.Assignments.Where(a => a.Id == assignmentId).FirstOrDefault();
+
+        AssignmentTitleLabel.Text = assignment.Title;
+
+        try
+        {
+            AssignmentContentLabel.Text = BBCode.ToHtml(assignment.Content);
+        }
+        catch
+        {
+            AssignmentContentLabel.Text = "Some tags did not load correctly<br />" + assignment.Content;
+        }
+
+        Session["CurrentAssignment"] = assignment;
+
+        SubmissionRepeater.DataBind();
+        GradeSubmissionView.DataBind();
+
+        HomePanel.Visible = false;
+        AssignmentPanel.Visible = true;
+
+        ActivePanelLabel.Text = "Assignments";
+    }
+
+    protected void DeleteAssignmentLink_Click(object sender, EventArgs e)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        Assignment assignment = (Assignment)Session["CurrentAssignment"];
+
+        dbContext.Assignments.Remove(dbContext.Assignments.Where(a => a.Id == assignment.Id).FirstOrDefault());
+        dbContext.SaveChanges();
+
+        AssignmentTitleLabel.Text = "";
+        AssignmentContentLabel.Text = "";
+
+        AssignmentRepeater.DataBind();
+
+        HomePanel.Visible = false;
+        AssignmentPanel.Visible = true;
+
+        ActivePanelLabel.Text = "Assignments";
+    }
+
+    protected void SubmissionButton_Click(object sender, EventArgs e)
+    {
+        if (SubmissionUpload.HasFile)
+        {
+            try
+            {
+                ApplicationDbContext dbContext = new ApplicationDbContext();
+
+                string fileName = Path.GetFileName(SubmissionUpload.FileName);
+                string fileType = Path.GetExtension(fileName).Replace(".", "");
+
+                Assignment CurrentAssignment = (Assignment)Session["CurrentAssignment"];
+
+                Assignment assignment = dbContext.Assignments.Where(a => a.Id == CurrentAssignment.Id).FirstOrDefault();
+
+                var sub = dbContext.Submissions.Where(s => s.Member.Id == member.Id && s.Assignment.Id == assignment.Id && s.Course.Id == course.Id).FirstOrDefault();
+
+                Submission submission;
+
+                if (sub != null)
+                    submission = dbContext.Submissions.Find(sub.Id);
+                else
+                    submission = new Submission();
+
+                submission.Title = SubmissionUpload.FileName;
+                submission.FileType = fileType;
+                submission.Data = SubmissionUpload.FileBytes;
+
+                submission.Assignment = dbContext.Assignments.Where(a => a.Id == CurrentAssignment.Id).FirstOrDefault();
+                submission.Member = dbContext.Members.Where(m => m.Id == member.Id).FirstOrDefault();
+                submission.Course = dbContext.Courses.Where(c => c.Id == course.Id).FirstOrDefault();
+
+                if (sub == null)
+                    dbContext.Submissions.Add(submission);
+
+                dbContext.SaveChanges();
+
+                SubmissionRepeater.DataBind();
+
+                HomePanel.Visible = false;
+                AssignmentPanel.Visible = true;
+
+                ActivePanelLabel.Text = "Assignments";
+            }
+            catch (DbEntityValidationException dbEx)
+            {
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        Response.Write(string.Format("Property: {0} Error: {1}",
+                                                validationError.PropertyName,
+                                                validationError.ErrorMessage));
+                    }
+                }
+            }
+        }
+    }
+
+    protected void NewAssignmentButton_Click(object sender, EventArgs e)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        Assignment assignment = new Assignment();
+
+        assignment.Title = NewAssignmentTitle.Text;
+        assignment.PossiblePoints = int.Parse(NewAssignmentPossiblePoints.Text);
+        assignment.Content = NewAssignmentContent.Text;
+        
+        assignment.Course = dbContext.Courses.Where(c => c.Id == course.Id).FirstOrDefault();
+
+        dbContext.Assignments.Add(assignment);
+
+        dbContext.SaveChanges();
+
+        AssignmentRepeater.DataBind();
+
+        NewAssignmentTitle.Text = "";
+        NewAssignmentPossiblePoints.Text = "";
+        NewAssignmentContent.Text = "";
+
+        HomePanel.Visible = false;
+        AssignmentPanel.Visible = true;
+
+        ActivePanelLabel.Text = "Assignments";
+    }
+
+    public IEnumerable<Enlighten.Models.Submission> SubmissionRepeater_GetData()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        Assignment CurrentAssignment = (Assignment)Session["CurrentAssignment"];
+
+        if (CurrentAssignment == null)
+            return null;
+
+        Assignment assignment = dbContext.Assignments.Where(a => a.Id == CurrentAssignment.Id).FirstOrDefault();
+
+        return dbContext.Submissions.Where(s => s.Member.Id == member.Id && s.Assignment.Id == assignment.Id && s.Course.Id == course.Id);
+    }
+
+    protected void SubmissionRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        if (e.CommandName == "Download")
+        {
+            int submissionId = int.Parse(e.CommandArgument.ToString());
+
+            Submission submission = dbContext.Submissions.Where(la => la.Id == submissionId).FirstOrDefault();
+
+            string fileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + "." + submission.FileType;
+            FileInfo fileInfo = new FileInfo(fileName);
+
+            using (var stream = fileInfo.OpenWrite())
+            {
+                stream.Write(submission.Data, 0, submission.Data.Count());
+            }
+
+            Response.ContentType = submission.FileType;
+            Response.AppendHeader("Content-Disposition", string.Format("attachment; filename={0}.{1}", submission.Title, submission.FileType));
+            Response.TransmitFile(fileInfo.FullName);
+            Response.End();
+        }
+    }
+
+    // The return type can be changed to IEnumerable, however to support
+    // paging and sorting, the following parameters must be added:
+    //     int maximumRows
+    //     int startRowIndex
+    //     out int totalRowCount
+    //     string sortByExpression
+    public IQueryable<Enlighten.Models.Submission> GradeSubmissionView_GetData()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        Assignment CurrentAssignment = (Assignment)Session["CurrentAssignment"];
+
+        if (CurrentAssignment == null)
+            return null;
+
+        Assignment assignment = dbContext.Assignments.Where(a => a.Id == CurrentAssignment.Id).FirstOrDefault();
+
+        return dbContext.Submissions.Include(s => s.Member).Where(s => s.Assignment.Id == assignment.Id && s.Course.Id == course.Id);
+    }
+
+    protected void DownloadSubmissionLink_Command(object sender, CommandEventArgs e)
+    {
+
+    }
+
+    protected void GradeSubmissionView_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        HomePanel.Visible = false;
+        AssignmentPanel.Visible = true;
+
+        ActivePanelLabel.Text = "Assignments";
+    }
+
+    protected void GradeSubmissionView_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+    {
+        HomePanel.Visible = false;
+        AssignmentPanel.Visible = true;
+
+        ActivePanelLabel.Text = "Assignments";
+    }
+
+    // The id parameter name should match the DataKeyNames value set on the control
+    public void GradeSubmissionView_UpdateItem(int id)
+    {
+        Enlighten.Models.Submission item = null;
+
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        item = dbContext.Submissions.Find(id);
+
+        if (item == null)
+        {
+            // The item wasn't found
+            ModelState.AddModelError("", String.Format("Item with id {0} was not found", id));
+            return;
+        }
+
+        var originalItem = dbContext.Submissions.Include(c => c.Member).Include(c => c.Assignment).Where(s => s.Id == id).FirstOrDefault();
+
+        item.Course = dbContext.Courses.Where(c => c.Id == course.Id).FirstOrDefault();
+        item.Member = dbContext.Members.Where(m => m.Id == originalItem.Member.Id).FirstOrDefault();
+        item.Assignment = dbContext.Assignments.Where(a => a.Id == originalItem.Assignment.Id).FirstOrDefault();
+
+        TryUpdateModel<Submission>(item);
+
+        if (ModelState.IsValid)
+        {
+            dbContext.SaveChanges();
+        }
+    }
+
+    protected void GradeSubmissionView_RowUpdating(object sender, GridViewUpdateEventArgs e)
+    {
+        HomePanel.Visible = false;
+        AssignmentPanel.Visible = true;
+
+        ActivePanelLabel.Text = "Assignments";
     }
 }

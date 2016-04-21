@@ -106,8 +106,8 @@ public partial class _Default : System.Web.UI.Page
             return null;
 
         /* Return all the courses the member is enrolled in. */
-        return dbContext.Courses.Include(c => c.Location).Where(m => m.Students.Any(x => x.Id == authenticatedMember.Id));
-        //return authenticatedMember.Courses;
+        return dbContext.Courses.Include(c => c.Location).Where(m => m.Students.Any(x => x.Id == authenticatedMember.Id) || m.ProfessorId == authenticatedMember.Id || m.AssistantId == authenticatedMember.Id);
+
     }
 
     public Member GetProfessorById(int Id)

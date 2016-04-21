@@ -12,6 +12,9 @@ namespace Enlighten.Models
 
         public int Score { get; set; }
 
+        public string Title { get; set; }
+        public string FileType { get; set; }
+
         public byte[] Data { get; set; }
 
         [Required]
@@ -19,5 +22,8 @@ namespace Enlighten.Models
 
         [Required]
         public Assignment Assignment { get; set; }
+
+        [Required]
+        public Course Course { get; set; }
     }
 }

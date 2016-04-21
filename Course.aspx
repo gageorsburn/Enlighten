@@ -27,14 +27,62 @@
     </div>
 
     <asp:Panel ID="HomePanel" runat="server">
-        <asp:Repeater ID="CourseArticleRepeater" ItemType="Enlighten.Models.CourseArticle" OnItemCommand="CourseArticleRepeater_ItemCommand" SelectMethod="CourseArticleRepeater_GetData" runat="server">
-            <HeaderTemplate>
-                <div class="row">
+        <div class="row">
                     <div class="col-md-8">
+                         <% if (IsMemberProfessor()) { %>
+
+                        <div id="newarticlemodal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Create New Article</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <!--<div class="col-md-offset-4 col-md-4">-->
+
+                                    <div class="control-group form-group">
+                                        <div class="controls">
+                                            <label>Article Title</label>
+                                            <asp:TextBox ID="NewArticleTitle" CssClass="form-control" runat="server"></asp:TextBox>
+                                            <p class="help-block"></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="control-group form-group">
+                                        <div class="controls">
+                                            <label>Article Content</label>
+                                            <asp:TextBox ID="NewArticleContent" TextMode="MultiLine" CssClass="form-control" runat="server"></asp:TextBox>
+                                            <p class="help-block"></p>
+                                        </div>
+                                    </div>
+
+                                    <!--</div>-->
+                                </div>
+                                <div class="modal-footer">
+                                    <asp:Button ID="NewArticleButton" CssClass="btn btn-primary" OnClick="NewArticleButton_Click" runat="server" Text="Create New Article" />
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        <a class="btn list-group-item" data-toggle="modal" data-target="#newarticlemodal">Create New Article</a>
+                        <hr />
+                        <% } %>
+        <asp:Repeater ID="CourseArticleRepeater" ItemType="Enlighten.Models.CourseArticle" SelectMethod="CourseArticleRepeater_GetData" runat="server">
+            <HeaderTemplate>
+
             </HeaderTemplate>
             <ItemTemplate>
                 <h2>
                     <%# Item.Title %>
+
+                    <% if (IsMemberProfessor())
+                            { %>
+                            <span class="fa">
+                                <asp:LinkButton ID="DeleteArticleLink" OnCommand="DeleteArticleLink_Command" CommandArgument="<%# Item.Id %>" CssClass="fa-times" runat="server"></asp:LinkButton>
+                            </span>
+                            <% } %>
                 </h2>
                 <p class="lead">
                     by <a href="#"><%# Item.Author.FullName %></a>
@@ -48,7 +96,10 @@
             </SeparatorTemplate>
             <FooterTemplate>
                 <asp:Label runat="server" Visible='<%# ((Repeater)Container.NamingContainer).Items.Count == 0 %>' Text="The professor has not posted any news!"></asp:Label>
-                </div>
+                
+            </FooterTemplate>
+            </asp:Repeater>
+            </div>
                 <div class="col-md-4">
                     <div class="well">
                         <asp:Repeater ID="CourseUrlRepeater" ItemType="Enlighten.Models.CourseUrl" SelectMethod="CourseUrlRepeater_GetData" runat="server">
@@ -64,8 +115,7 @@
                     </div>
                 </div>
                 </div>
-            </FooterTemplate>
-        </asp:Repeater>
+        
     </asp:Panel>
 
     <asp:Panel ID="LessonPanel" runat="server">
@@ -110,8 +160,6 @@
                     </div>
 
                     <a class="btn list-group-item" data-toggle="modal" data-target="#newlessonmodal">Create New Lesson</a>
-
-                    <!--TODO: Add Modal To Create New Lessons-->
 
                     <% } %>
                     <asp:Repeater ID="LessonRepeater" ItemType="Enlighten.Models.Lesson" SelectMethod="LessonRepeater_GetData" OnItemCommand="LessonRepeater_ItemCommand" runat="server">
@@ -189,7 +237,157 @@
     </asp:Panel>
 
     <asp:Panel ID="AssignmentPanel" runat="server">
-        Assignment
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+
+                    <% if (IsMemberProfessor())
+                       {%>
+                   <div id="newassignmentmodal" class="modal fade" role="dialog">
+                       <div class="modal-dialog">
+                           <div class="modal-content">
+                               <div class="modal-header">
+                                   <h4 class="modal-title">Create New Assignment</h4>
+                               </div>
+                               <div class="modal-body">
+                                   <!--<div class="col-md-offset-4 col-md-4">-->
+
+                                   <div class="control-group form-group">
+                                       <div class="controls">
+                                           <label>Assignment Title</label>
+                                           <asp:TextBox ID="NewAssignmentTitle" CssClass="form-control" runat="server"></asp:TextBox>
+                                           <p class="help-block"></p>
+                                       </div>
+                                   </div>
+
+                                   <div class="control-group form-group">
+                                       <div class="controls">
+                                           <label>Assignment Possible Points</label>
+                                           <asp:TextBox ID="NewAssignmentPossiblePoints" TextMode="Number" CssClass="form-control" runat="server"></asp:TextBox>
+                                           <p class="help-block"></p>
+                                       </div>
+                                   </div>
+
+                                   <div class="control-group form-group">
+                                       <div class="controls">
+                                           <label>Assignment Content</label>
+                                           <asp:TextBox ID="NewAssignmentContent" TextMode="MultiLine" CssClass="form-control" runat="server"></asp:TextBox>
+                                           <p class="help-block"></p>
+                                       </div>
+                                   </div>
+
+                                   <!--</div>-->
+                               </div>
+                               <div class="modal-footer">
+                                   <asp:Button ID="NewAssignmentButton" CssClass="btn btn-primary" OnClick="NewAssignmentButton_Click" runat="server" Text="Create New Lesson" />
+                                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+
+                   <a class="btn list-group-item" data-toggle="modal" data-target="#newassignmentmodal">Create New Assignment</a>
+
+                   <% } %>
+
+                    <asp:Repeater ID="AssignmentRepeater" ItemType="Enlighten.Models.Assignment" SelectMethod="AssignmentRepeater_GetData" OnItemCommand="AssignmentRepeater_ItemCommand" runat="server">
+                        <ItemTemplate>
+                            <asp:LinkButton CommandArgument="<%# Item.Id %>" CssClass="list-group-item" runat="server"><%# Item.Title %></asp:LinkButton>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+            </div>
+
+            <div class="col-md-9 ">
+               <% if (AssignmentTitleLabel.Text != string.Empty)
+                   { %>
+               <div class="panel panel-default">
+                   <div class="panel-heading text-center">
+                       <h2>
+                           <asp:Label ID="AssignmentTitleLabel" runat="server" Text=""></asp:Label>
+
+                           <% if (IsMemberProfessor())
+                           { %>
+                           <span class="fa">
+                               <asp:LinkButton ID="DeleteAssignmentLink" OnClick="DeleteAssignmentLink_Click" CssClass="fa-times" runat="server"></asp:LinkButton>
+                           </span>
+                           <% } %>
+                       </h2>
+
+                   </div>
+                   <div class="panel-body">
+                       <p>
+                           <asp:Label ID="AssignmentContentLabel" runat="server" Text=""></asp:Label>
+                       </p>
+                   </div>
+                   <div class="panel-footer">
+                       <div class="row">
+                           <div class="col-md-8">
+                               <h4>Submission</h4>
+                           </div>
+                       </div>
+                      
+                       <% if (!IsMemberProfessor())
+                           { %>
+                       <asp:Repeater ID="SubmissionRepeater" ItemType="Enlighten.Models.Submission" SelectMethod="SubmissionRepeater_GetData" OnItemCommand="SubmissionRepeater_ItemCommand" runat="server">
+                           <ItemTemplate>
+                               <asp:LinkButton CommandName="Download" CommandArgument="<%# Item.Id %>" runat="server"><%# Item.Title %></asp:LinkButton>
+                           </ItemTemplate>
+                           <FooterTemplate>
+                               <asp:Label runat="server" Visible='<%# ((Repeater)Container.NamingContainer).Items.Count == 0 %>' Text="No submissions."></asp:Label>
+                           </FooterTemplate>
+                       </asp:Repeater>
+                       <hr />
+                       
+                       <div class="row">
+                           <div class="col-md-8">
+                               <div class="control-group form-group">
+                                   <div class="controls">
+                                       <asp:FileUpload CssClass="form-control" ID="SubmissionUpload" runat="server" />
+                                   </div>
+                               </div>
+                               <div class="control-group form-group">
+                                   <div class="controls">
+                                       <asp:LinkButton CssClass="btn btn-primary" ID="SubmissionButton" OnClick="SubmissionButton_Click" runat="server">Submit Assignment</asp:LinkButton>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <% }
+    else { %>
+                       
+
+                       <asp:GridView ID="GradeSubmissionView" ItemType="Enlighten.Models.Submission" AutoGenerateColumns="false" AutoGenerateEditButton="true" SelectMethod="GradeSubmissionView_GetData" UpdateMethod="GradeSubmissionView_UpdateItem" OnRowEditing="GradeSubmissionView_RowEditing" OnRowCancelingEdit="GradeSubmissionView_RowCancelingEdit"  OnRowUpdating="GradeSubmissionView_RowUpdating" DataKeyNames="Id" runat="server">
+                           <Columns>
+                               <asp:TemplateField HeaderText="Title">
+                                   <ItemTemplate>
+                                       <%# Item.Title %>
+                                   </ItemTemplate>
+                               </asp:TemplateField>
+                               <asp:TemplateField HeaderText="Score">
+                                   <ItemTemplate>
+                                       <%# Item.Score %>
+                                   </ItemTemplate>
+                                   <EditItemTemplate>
+                                       <asp:TextBox ID="EditScoreText" TextMode="Number" Text="<%# BindItem.Score %>" runat="server"></asp:TextBox>
+                                   </EditItemTemplate>
+                               </asp:TemplateField>
+                               <asp:TemplateField HeaderText="Student">
+                                   <ItemTemplate>
+                                       <%# Item.Member.FullName %>
+                                   </ItemTemplate>
+                               </asp:TemplateField>
+                           </Columns>
+                       </asp:GridView>
+                       <asp:ValidationSummary ID="ValidationSummary1" ShowModelStateErrors="true" runat="server" />
+                       <% } %>
+                   </div>
+               </div>
+               <%} %>
+           </div>
+
+        </div>
+
     </asp:Panel>
 
     <asp:Panel ID="GradePanel" runat="server">
