@@ -19,24 +19,39 @@ public partial class Course : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
+        //If member is not logged in, redirect home.
         if (!Request.IsAuthenticated)
             Response.Redirect("~/Default.aspx");
 
+        //Parse the course id.
         int courseId;
         bool success = int.TryParse(Page.RouteData.Values["Id"].ToString(), out courseId);
 
         if (!success)
             Response.Redirect("~/Default.aspx");
 
+        //Create the database connection.
         ApplicationDbContext dbContext = new ApplicationDbContext();
 
+        //Fetch course from parsed course id.
         course = dbContext.Courses.Where(c => c.Id == courseId).FirstOrDefault();
 
+        //If course does not exist, redirect home.
+        if(course == null)
+            Response.Redirect("~/Default.aspx");
+
+        //Fetch the logged in member object.
         member = dbContext.Members.Where(m => m.Email == Context.User.Identity.Name).FirstOrDefault();
 
+        //If member does not belong in the course, redirect home.
         if (!member.Courses.Contains(course) && course.ProfessorId != member.Id)
             Response.Redirect("~/Default.aspx");
 
+        setHomeVisible();
+    }
+
+    public void setHomeVisible()
+    {
         ActivePanelLabel.Text = "Course Home";
 
         HomePanel.Visible = true;
@@ -46,17 +61,9 @@ public partial class Course : System.Web.UI.Page
         ClassListPanel.Visible = false;
     }
 
-
-
     protected void HomeHyperLink_Click(object sender, EventArgs e)
     {
-        ActivePanelLabel.Text = "Course Home";
-
-        HomePanel.Visible = true;
-        LessonPanel.Visible = false;
-        AssignmentPanel.Visible = false;
-        GradePanel.Visible = false;
-        ClassListPanel.Visible = false;
+        setHomeVisible();
     }
 
     protected void LessonHyperLink_Click(object sender, EventArgs e)
@@ -622,5 +629,18 @@ public partial class Course : System.Web.UI.Page
     {
         int submissionId = int.Parse(e.CommandArgument.ToString());
         DownloadSubmission(submissionId);
+    }
+
+    // The return type can be changed to IEnumerable, however to support
+    // paging and sorting, the following parameters must be added:
+    //     int maximumRows
+    //     int startRowIndex
+    //     out int totalRowCount
+    //     string sortByExpression
+    public IQueryable GradeView_GetData()
+    {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+
+        return dbContext.Submissions.Include(s => s.Assignment).Where(s => s.Member.Id == member.Id && s.Course.Id == course.Id);
     }
 }

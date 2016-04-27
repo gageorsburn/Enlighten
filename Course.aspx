@@ -395,7 +395,30 @@
     </asp:Panel>
 
     <asp:Panel ID="GradePanel" runat="server">
-        Grade
+        <div class="col-md-12 table-responsive">
+            <asp:GridView ID="GradeView" CssClass="table" SelectMethod="GradeView_GetData" AutoGenerateColumns="false" ItemType="Enlighten.Models.Submission" runat="server">
+                <Columns>
+                    <asp:TemplateField HeaderText="Assignment Title">
+                        <ItemTemplate><%# Item.Assignment.Title %></ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Submission Title">
+                        <ItemTemplate><%# Item.Title %></ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Score" ItemStyle-CssClass="active">
+                        <ItemTemplate><%# Item.Score %></ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Points Possible">
+                        <ItemTemplate><%# Item.Assignment.PossiblePoints %></ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Percentage">
+                        <ItemTemplate><%# string.Format("{0:P2}", Item.Score/Item.Assignment.PossiblePoints) %></ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+                <EmptyDataTemplate>
+                    No grades!
+                </EmptyDataTemplate>
+            </asp:GridView>
+        </div>
     </asp:Panel>
 
     <asp:Panel ID="ClassListPanel" runat="server">
