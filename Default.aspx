@@ -12,7 +12,7 @@
             <div class="item active">
                 <img src="http://wallpaper.zone/img/2783494.jpg" />
                 <div class="carousel-caption">
-                    <h2>Caption 1</h2>
+                    <h2>Welcome!</h2>
                 </div>
             </div>
             <div class="item">
